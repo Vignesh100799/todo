@@ -15,7 +15,7 @@ const Hero = ({ user, handleToDoDelete, handleEdit, handleStatusChange }) => {
         
         <div>Title :{user.name}</div>
             <div>Description :{user.desc}</div>
-          <div>
+          <div >
             Status : 
            <Status handleStatusChange={handleStatusChange}  user={user}/>
           </div>

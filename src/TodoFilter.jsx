@@ -9,7 +9,7 @@ const Filter = ({ onFilterChange,setFilterStatus,filterStatus }) => {
 
   return (
     <div>
-      <label htmlFor="filter">Filter Status: </label>
+      <label className='m-2' htmlFor="filter">Filter Status: </label>
       <select
        className={`${filterStatus === 'Completed' ? 'light-green-sts': filterStatus === 'All'? 'sky-blue'  : 'bg-danger'}`}
         id="filter"

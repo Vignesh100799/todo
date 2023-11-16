@@ -5,7 +5,7 @@ const Status = ({user,handleStatusChange}) => {
  
 
   return (
-
+     
     <select
     id="status"
     value={user.status}
@@ -21,6 +21,7 @@ const Status = ({user,handleStatusChange}) => {
       Not Completed
     </option>
   </select>
+ 
   )
 }
 export default Status
