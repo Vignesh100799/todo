@@ -1,13 +1,27 @@
-import React from 'react'
+import React from 'react';
 
-const TodoFilter = () => {
+const Filter = ({ onFilterChange,setFilterStatus,filterStatus }) => {
+
+  const handleFilterChange = (status) => {
+    setFilterStatus(status);
+    onFilterChange(status);
+  };
+
   return (
-    <select className="select" aria-label="Default select example">
-    <option value="1">All</option>
-    <option value="2">Completed</option>
-    <option value="3">Not Completed</option>
-    </select>
-  )
-}
+    <div>
+      <label htmlFor="filter">Filter Status: </label>
+      <select
+       className={`${filterStatus === 'Completed' ? 'light-green-sts': filterStatus === 'All'? 'sky-blue'  : 'bg-danger'}`}
+        id="filter"
+        value={filterStatus}
+        onChange={(e) => handleFilterChange(e.target.value)}
+      >
+        <option  value="All">All</option>
+        <option style={{ backgroundColor: "#13ad89" }} value="Completed">Completed</option>
+        <option className="btn btn-danger" value="Not Completed">Not Completed</option>
+      </select>
+    </div>
+  );
+};
 
-export default TodoFilter
+export default Filter;

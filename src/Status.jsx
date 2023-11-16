@@ -1,21 +1,26 @@
 
 
-const Status = ({item,statusChange}) => {
+const Status = ({user,handleStatusChange}) => {
 
  
-const handleChange = (e)=>{
-
- 
-
-  statusChange(e.target.value)
-}
 
   return (
 
-<select value={item.status} className={`${item.status === 'Completed' ? 'light-green-sts' : 'bg-danger' }`}   onChange={handleChange} aria-label="Default select example">
-    <option  value="NotCompleted" >Not Completed</option>
-    <option  value="Completed">Completed</option>
-    </select>
+    <select
+    id="status"
+    value={user.status}
+    className={`${
+      user.status === "Completed" ? "light-green-sts" : "bg-danger"
+    }`}
+    onChange={(e) => handleStatusChange(e.target.value)}
+  >
+    <option style={{ backgroundColor: "#13ad89" }} value="Completed">
+      Completed
+    </option>
+    <option className="btn btn-danger" value="Not Completed">
+      Not Completed
+    </option>
+  </select>
   )
 }
 export default Status

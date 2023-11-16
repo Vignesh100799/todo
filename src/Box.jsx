@@ -1,155 +1,173 @@
-import React, { useState, useEffect } from "react";
-import TodoFilter from "./TodoFilter";
+import { useState, useEffect } from "react";
+import React from "react";
+import "./TodoFilter";
 import Todolist from "./Todolist";
+import TodoFilter from "./TodoFilter";
 
-const Box = () => {
-  const [todo, setTodo] = useState([]);
-  const [newtitle, setNewTitle] = useState("");
-  const [newdesc, setNewDesc] = useState("");
-  const [edit,setEdit]=useState(null)
-  const [newstatus,setNewStatus]=useState('NotCompleted')
+const Input = () => {
+  const [user, setUser] = useState([]);
+  const [name, setName] = useState("");
+  const [desc, setDesc] = useState("");
+  const [editIndex, setEditIndex] = useState(null);
+  const [filterStatus, setFilterStatus] = useState("All");
 
-
-  const statusChange = (value)=>{
-    const updatedStatus = todo.map(todo=>(todo.title === newtitle ? {...todo,status:newstatus}: todo))
-   
-    setNewStatus(value)
-    setTodo(updatedStatus)
-   
-  }
- 
-
- 
-  const handleAdd = () => {
-    if(edit){
-       let update = todo.map((ele)=>
-        {
-          return ele.title === edit.title 
-          ? {...ele,title:newtitle,description:newdesc,status:newstatus} 
-          : ele
-        }
-      ) 
-      setTodo(update)
-      setEdit(edit)
-      setNewStatus(newstatus)
-      
-      localStorage.setItem("list", JSON.stringify(update));
-
-    }
-    else{
-    let newtodo = {
-      title: newtitle,
-      description: newdesc,
-      status:newstatus,
+  const addNewUser = () => {
+    const newUser = {
+      name: name,
+      desc: desc,
+      status: "Not Completed", // Default status when adding a new user
     };
-      let arr = [...todo,newtodo]
-      setTodo(arr);
-      localStorage.setItem("list", JSON.stringify(arr));
-  }
-    setNewDesc("");
-    setNewTitle("");
-    setNewStatus("")
-};
+    // console.log(newUser);
+
+    const arr = [...user, newUser];
+
+    setUser(arr);
+    localStorage.setItem("todolist", JSON.stringify(arr));
+
+    if (editIndex !== null) {
+      // Edit existing user
+      const updatedUsers = [...user];
+      updatedUsers[editIndex] = newUser;
+      setUser(updatedUsers);
+      setEditIndex(null); // Exit edit mode
+    } else {
+      // Add new user
+      const arr = [...user, newUser];
+      setUser(arr);
+    }
+
+    localStorage.setItem("todolist", JSON.stringify(user));
+
+    setName("");
+    setDesc("");
+  };
 
   useEffect(() => {
-    let savedTodo = JSON.parse(localStorage.getItem("list"));
-    if (savedTodo) {
-      setTodo(savedTodo);
+    let savedTodo = JSON.parse(localStorage.getItem("todolist"));
+    if (Array.isArray(savedTodo)) {
+      setUser(savedTodo);
+    } else {
+      setUser([]); // Set default value if savedTodo is not an array
     }
   }, []);
 
-  useEffect(()=>{
-    if(edit){
-      setNewTitle(edit.title)
-      setNewDesc(edit.description)
-      setNewStatus(edit.status)
-   
-     
-      
-    }else{
-      setNewDesc("");
-      setNewTitle("");
-      setNewStatus("")
-      
-     
-      }
-  },[edit])
+  const handleToDoDelete = (index) => {
+    let reducedTodos = [...user];
+    reducedTodos.splice(index, 1);
+    setUser(reducedTodos);
 
-  const handleEdit = (index)=>{
-    let editTodo = todo[index]
-    setEdit(editTodo)
-   
-  }
-
-  const handleDelete = (index) => {
-    let deleted = [...todo];
-    deleted.splice(index, 1);
-    localStorage.setItem("list", JSON.stringify(deleted));
-    setTodo(deleted);
+    localStorage.setItem("todolist", JSON.stringify(reducedTodos));
+    setUser(reducedTodos);
   };
+
+  const handleEdit = (index) => {
+    const editUser = user[index];
+    setName(editUser.name);
+    setDesc(editUser.desc);
+    setEditIndex(index);
+  };
+
+  const handleFilterChange = (status) => {
+    setFilterStatus(status);
+  };
+
+  const handleStatusChange = (index, status) => {
+    const updatedUser = { ...user[index], status: status };
+    const updatedUserList = [
+      ...user.slice(0, index),
+      updatedUser,
+      ...user.slice(index + 1),
+    ];
+
+    setUser(updatedUserList);
+
+    localStorage.setItem("todolist", JSON.stringify(updatedUserList));
+  };
+
   return (
     <form className="my-5">
       <div className="row">
         <div className="col-xl-6">
           <input
             type="text"
-            placeholder="Name"
-            value={newtitle}
-            onChange={(e) => setNewTitle(e.target.value)}
+            value={name}
             className="form-control"
-            
+            placeholder="Name"
+            onChange={(event) => setName(event.target.value)}
           />
         </div>
         <div className="col-xl-6">
           <input
             type="text"
-            placeholder="Description"
+            value={desc}
             className="form-control"
-            value={newdesc}
-            onChange={(e) => setNewDesc(e.target.value)}
-            
+            placeholder="Description"
+            onChange={(event) => setDesc(event.target.value)}
           />
         </div>
         <div className="col-xl-12 my-5">
-          {newtitle.trim() === "" || newdesc.trim() === "" ? (
+          {name.trim() === "" || desc.trim() === "" ? (
             <button
               disabled
               className="btn btn-danger"
               type="submit"
-              onClick={handleAdd}
+              onClick={addNewUser}
             >
               Add
             </button>
           ) : (
             <button
-              className="btn btn-primary"
               type="submit"
-              onClick={handleAdd}
+              onClick={(e) => e.preventDefault(addNewUser())}
+              className=" btn rounded m-5"
+              style={{
+                backgroundColor: "#13ad89",
+                color: "white",
+                border: "0",
+                width: "150px",
+              }}
             >
               Add
             </button>
           )}
         </div>
-        <div className="row mt-5 align-items-center">
-          <div className="col-xl-6 sm-12">
-            <h2>MY TODOS LIST</h2>
-          </div>
-          <div className="col-xl-6 sm-12 primary">
-            Filter : <TodoFilter />
-          </div>
+      </div>
+      <div className="row mt-5 align-items-center">
+        <div className="col-xl-6 sm-12">
+          <h1>MY TODOS LIST</h1>
         </div>
-        <div className="container">
-          <div className="row justify-content-center">
-            {todo.map((item, index) => {
-              return (
-                <Todolist  statusChange={statusChange} handleDelete={handleDelete} handleEdit={handleEdit} key={index} index={index} item={item} />
-              );
+        <div className="col-xl-6 sm-12 primary  ">
+          <TodoFilter
+            onFilterChange={handleFilterChange}
+            setFilterStatus={setFilterStatus}
+            filterStatus={filterStatus}
+          />
+        </div>
+      </div>
+      <div className="container">
+        <div className="row justify-content-center">
+          <div className="col">
+            {user.map((item, index) => {
+              if (filterStatus === "All" || filterStatus === item.status) {
+                return (
+                  <Todolist
+                    user={item}
+                    handleToDoDelete={() => handleToDoDelete(index)}
+                    handleStatusChange={(status) =>
+                      handleStatusChange(index, status)
+                    }
+                    handleEdit={() => handleEdit(index)}
+                    key={index}
+                  />
+                );
+              }
+              return null;
             })}
-          </div>
+          </div>{" "}
         </div>
       </div>
     </form>
   );
 };
 
-export default Box;
+export default Input;
