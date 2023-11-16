@@ -109,9 +109,15 @@ const Input = () => {
           {name.trim() === "" || desc.trim() === "" ? (
             <button
               disabled
-              className="btn btn-danger"
+              className="btn btn-danger m-5"
               type="submit"
               onClick={addNewUser}
+              style={{
+                
+                color: "white",
+                border: "0",
+                width: "150px",
+              }}
             >
               Add
             </button>
