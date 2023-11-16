@@ -1,8 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import './App.css';
 import Box from './Box';
-import Todolist from './Todolist';
-import { useState } from 'react';
 
 
 function App() {
